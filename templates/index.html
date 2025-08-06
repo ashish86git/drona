@@ -5,6 +5,8 @@
   <title>Logistics & Supply Chain</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 
   <style>
     * {
@@ -56,11 +58,15 @@
       backdrop-filter: blur(5px);
     }
 
-    nav .logo {
-      font-size: 1.7rem;
-      font-weight: bold;
-      color: #ffcc00;
+    .logo img {
+        width: 120px;             /* Adjust as needed */
+        height: auto;             /* Keeps original image aspect ratio */
+        object-fit: contain;      /* Prevents cropping */
+        border: none;             /* Optional */
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);  /* Optional: soft shadow */
     }
+
+
 
     nav ul {
       list-style: none;
@@ -346,7 +352,76 @@
       background-color: #ffffff44;
     }
 
+    #contact {
+      background: #f0f4f8;
+      padding: 60px 20px;
+    }
 
+    .contact-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    #contact h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 25px;
+      color: #666;
+    }
+
+    .email-link {
+      color: #e60000; /* Red color */
+      font-weight: 600;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .email-link:hover {
+      text-decoration: underline;
+    }
+
+    .email-icon {
+      color: #e60000;  /* Red icon */
+      margin-left: 10px;
+      margin-right: 4px;
+    }
+
+    #contact form input,
+    #contact form textarea {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    #contact form button {
+      width: 100%;
+      padding: 14px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #contact form button:hover {
+      background-color: #0056b3;
+    }
 
 
     footer {
@@ -381,7 +456,10 @@
   </video>
 
   <nav>
-    <div class="logo">Drona</div>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Drona Logo">
+    </div>
+
     <ul>
       <li><a href="#hero">Home</a></li>
       <li><a href="#about">About</a></li>
@@ -610,14 +688,23 @@
 
 
   <section id="contact">
-    <h2>Contact Us</h2>
-    <form>
-      <input type="text" placeholder="Your Name" required>
-      <input type="email" placeholder="Email" required>
-      <textarea placeholder="Message" rows="4" required></textarea>
-      <button type="submit">Send</button>
-    </form>
+    <div class="contact-container">
+      <h2>Get in Touch</h2>
+      <p class="subtitle">
+        We'd love to hear from you. Fill out the form or email us at
+        <i class="fas fa-envelope email-icon"></i>
+        <a href="mailto:info@dronalogitech.com" class="email-link">info@dronalogitech.com</a>
+      </p>
+
+      <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message" rows="4" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
   </section>
+
 
   <footer>
     <p>&copy; 2025 Drona Logitech Pvt Ltd. All rights reserved.</p>
