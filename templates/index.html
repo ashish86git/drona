@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 
   <style>
@@ -316,12 +318,12 @@
     }
 
     .india-map-svg {
-      width: 100%;
-      height: auto;
+      width: 50%;
+      height: 50;
     }
 
     .highlight-state {
-      fill: #ffffff33;
+      fill: #f3f3f3;
       stroke: white;
       stroke-width: 1.5;
       cursor: pointer;
@@ -423,6 +425,38 @@
       background-color: #0056b3;
     }
 
+    #customers {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .customer-logo {
+      width: 400px; /* Increase or decrease as needed */
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .customer-logo:hover {
+      transform: scale(1.05); /* Slight zoom on hover */
+    }
+
+    blockquote {
+      margin-top: 30px;
+      font-style: italic;
+      color: #555;
+    }
+
+
 
     footer {
       background: rgba(0, 0, 0, 0.8);
@@ -457,7 +491,9 @@
 
   <nav>
     <div class="logo">
-        <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Drona Logo">
+        <a href="/">
+            <i class="fas fa-home" style="font-size: 32px; color: red;"></i>
+        </a>
     </div>
 
     <ul>
@@ -645,11 +681,12 @@
   <section id="customers">
     <h2>Our Customers</h2>
     <div class="logos">
-      <img src="{{ url_for('static', filename='img/customer1.png') }}" alt="Customer 1">
-<!--      <img src="{{ url_for('static', filename='img/customer2.png') }}" alt="Customer 2">-->
+      <img src="{{ url_for('static', filename='img/customer1.png') }}" alt="Customer 1" style="width: 450px; height: auto;">
+      <!-- <img src="{{ url_for('static', filename='img/customer2.png') }}" alt="Customer 2" style="width: 250px; height: auto;"> -->
     </div>
     <blockquote>“Excellent service and support!” – All Customer</blockquote>
   </section>
+
 
   <section id="location">
     <div class="container text-center">
