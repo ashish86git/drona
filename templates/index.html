@@ -2,781 +2,273 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Logistics & Supply Chain</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-
-
+  <title>Vehicle Holding Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body, html {
-      height: 100%;
+    body {
+      background-color: #f4f6f9;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
     }
-
-    /* Background video */
-    .video-background,
-    #bg-video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      filter: brightness(0.4);
+    .navbar {
+      background: linear-gradient(90deg, #212529, #343a40);
     }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      z-index: -1;
-    }
-
-    nav {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(5px);
-    }
-
-    .logo img {
-        width: 120px;             /* Adjust as needed */
-        height: auto;             /* Keeps original image aspect ratio */
-        object-fit: contain;      /* Prevents cropping */
-        border: none;             /* Optional */
-        box-shadow: 0 0 5px rgba(0,0,0,0.1);  /* Optional: soft shadow */
-    }
-
-
-
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 2rem;
-    }
-
-    nav ul li a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-
-    nav ul li a:hover {
-      color: #ffcc00;
-    }
-
-    section {
-      padding: 80px 20px;
-      text-align: center;
-    }
-
-    #hero {
-      padding: 120px 20px;
-    }
-
-    #hero h1 {
-      font-size: 3.2rem;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 6px #000;
-    }
-
-    #hero p {
-      font-size: 1.4rem;
-      margin-bottom: 1.5rem;
-      text-shadow: 1px 1px 4px #000;
-    }
-
-    .cta-button {
-      padding: 12px 30px;
-      background-color: #ffcc00;
-      color: #000;
-      text-decoration: none;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 1rem;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    .cta-button:hover {
-      background-color: #e6b800;
-      transform: scale(1.05);
-    }
-
-    h2 {
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-      color: #00ffc3;
-    }
-
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 30px;
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
+    .navbar-brand img { height: 40px; }
+    .navbar a.btn:hover { transform: scale(1.05); }
+    .card { border-radius: 15px; transition: transform 0.2s, box-shadow 0.2s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+    .form-section {
+      background: #ffffff;
       border-radius: 15px;
-      overflow: hidden;
-      width: 280px;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      position: relative;
-    }
-
-    .card:hover {
-      transform: scale(1.08);
-      box-shadow: 0 10px 30px rgba(255, 204, 0, 0.4);
-    }
-
-    .card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-
-    .card h3 {
-      font-size: 1.4rem;
-      margin-bottom: 10px;
-      color: #ffcc00;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      color: #f0f0f0;
-    }
-
-    .card-note {
-      display: none;
-      margin-top: 15px;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 10px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 0.9rem;
-    }
-
-    .card.active .card-note {
-      display: block;
-    }
-
-
-    .logos {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 30px;
-      flex-wrap: wrap;
-    }
-
-    .logos img {
-      width: 120px;
-      filter: brightness(1.3);
-      transition: transform 0.3s;
-    }
-
-    .logos img:hover {
-      transform: scale(1.1);
-    }
-
-    blockquote {
-      margin-top: 20px;
-      font-style: italic;
-      font-size: 1.1rem;
-      color: #ffcc00;
-    }
-
-    form {
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    input, textarea {
-      padding: 12px;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-    }
-
-    button {
-      padding: 12px;
-      background-color: #ffcc00;
-      border: none;
-      font-weight: bold;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #e6b800;
-    }
-    #about {
-      background-color: #C22708;
-      padding: 60px 20px;
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 18px;
-      line-height: 1.8;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    #about h2 {
-      font-size: 32px;
-      margin-bottom: 30px;
-      color: #ffffff;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    #about p {
-      margin-bottom: 15px;
-      text-align: justify;
-    }
-
-    .about-paragraphs {
-      max-width: 960px;
-      margin: 0 auto 40px;
-    }
-
-    .about-card {
-      background-color: rgba(255, 255, 255, 0.05); /* Slight transparency */
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #ffffff;
       padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
     }
-
-    .about-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .about-card h4 {
-      font-size: 22px;
-      color: #ffffff;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-
-    .about-card i {
-      color: #ffffff;
-    }
-
-    @media (max-width: 768px) {
-      .about-card {
-        margin-bottom: 20px;
-      }
-    #location {
-      background: linear-gradient(135deg, #C22708, #430b00);
-      color: white;
-      padding: 60px 20px;
-      border-radius: 12px;
-    }
-
-    .map-wrapper {
-      max-width: 600px;
-      margin: 0 auto 30px;
-    }
-
-    .india-map-svg {
-      width: 50%;
-      height: 50;
-    }
-
-    .highlight-state {
-      fill: #f3f3f3;
-      stroke: white;
-      stroke-width: 1.5;
-      cursor: pointer;
-      transition: fill 0.3s ease;
-    }
-
-    .highlight-state:hover {
-      fill: #ffffff88;
-    }
-
-    .state-tags {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .state-tags span {
-      background-color: #ffffff22;
-      border: 1px solid #fff;
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .state-tags span:hover {
-      background-color: #ffffff44;
-    }
-
-    #contact {
-      background: #f0f4f8;
-      padding: 60px 20px;
-    }
-
-    .contact-container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    #contact h2 {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .subtitle {
-      text-align: center;
-      font-size: 15px;
-      margin-bottom: 25px;
-      color: #666;
-    }
-
-    .email-link {
-      color: #e60000; /* Red color */
-      font-weight: 600;
-      text-decoration: none;
-      margin-left: 6px;
-    }
-
-    .email-link:hover {
-      text-decoration: underline;
-    }
-
-    .email-icon {
-      color: #e60000;  /* Red icon */
-      margin-left: 10px;
-      margin-right: 4px;
-    }
-
-    #contact form input,
-    #contact form textarea {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-
-    #contact form button {
-      width: 100%;
-      padding: 14px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #contact form button:hover {
-      background-color: #0056b3;
-    }
-
-    #customers {
-      text-align: center;
-      padding: 40px;
-    }
-
-    .logos {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-
-    .customer-logo {
-      width: 400px; /* Increase or decrease as needed */
-      max-width: 100%;
-      height: auto;
-      transition: transform 0.3s ease;
-    }
-
-    .customer-logo:hover {
-      transform: scale(1.05); /* Slight zoom on hover */
-    }
-
-    blockquote {
-      margin-top: 30px;
-      font-style: italic;
-      color: #555;
-    }
-
-
-
+    .table { border-radius: 10px; overflow: hidden; }
+    .table-hover tbody tr:hover { background-color: #f1f5ff; }
     footer {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 20px;
-      text-align: center;
-      font-size: 0.9rem;
+      background: #212529; color: #ddd; padding: 20px 0; margin-top: 40px;
     }
-
-    @media (max-width: 768px) {
-      .card-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      nav ul {
-        flex-direction: column;
-        gap: 1rem;
-        background: rgba(0, 0, 0, 0.95);
-        padding: 1rem;
-        display: none;
-      }
-    }
+    footer a { color: #ddd; margin: 0 10px; font-size: 1.4rem; transition: color 0.2s; }
+    footer a:hover { color: #0d6efd; }
   </style>
-
 </head>
 <body>
 
-  <video autoplay muted loop id="bg-video">
-    <source src="{{ url_for('static', filename='video/bg.mp4') }}" type="video/mp4">
-    Your browser does not support HTML5 video.
-  </video>
-
-  <nav>
-    <div class="logo">
-        <a href="/">
-            <i class="fas fa-home" style="font-size: 32px; color: red;"></i>
-        </a>
-    </div>
-
-    <ul>
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#customers">Customers</a></li>
-      <li><a href="#location">Location</a> </li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-
-  <section id="hero" style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
-    <!-- Background video -->
-    <video autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
-      <source src="{{ url_for('static', filename='video/bg.mp4') }}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-
-    <!-- Overlay -->
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 0;"></div>
-
-    <!-- Hero Content -->
-    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;
-                text-align: center; color: #fff; padding: 0 20px;">
-      <h1 style="font-size: 3.5rem; margin: 0; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.6);">Drona Logitech</h1>
-      <h2 style="font-size: 2rem; font-weight: 500; margin-top: 10px; color: #f0f0f0;">Warehouse & Logistics Solutions</h2>
-      <p style="font-size: 1.2rem; margin: 20px 0 30px; color: #e0e0e0;">Reliable. Scalable. Efficient.</p>
-      <a href="#contact" style="padding: 12px 30px; font-size: 1rem; color: white; background-color: #007bff; border: none;
-                border-radius: 25px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,123,255,0.3);
-                transition: all 0.3s ease-in-out;"
-         onmouseover="this.style.backgroundColor='#0056b3'; this.style.boxShadow='0 6px 16px rgba(0,86,179,0.4)';"
-         onmouseout="this.style.backgroundColor='#007bff'; this.style.boxShadow='0 4px 12px rgba(0,123,255,0.3)';">
-        Get In Touch
+<!-- Header Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+      <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Drona Logo" class="me-2 rounded-circle">
+      Vehicle Holding Dashboard
+    </a>
+    <div class="ms-auto d-flex">
+      <a href="{{ url_for('home') }}" class="btn btn-outline-light me-2">
+        <i class="bi bi-house-door"></i> Home
+      </a>
+      <a href="{{ url_for('logout') }}" class="btn btn-danger">
+        <i class="bi bi-box-arrow-right"></i> Logout
       </a>
     </div>
-  </section>
+  </div>
+</nav>
 
+<div class="container py-4">
 
-  <section id="about">
-    <h2 class="text-center">About Us</h2>
-
-    <div class="about-paragraphs">
-      <p>
-        <strong>Drona Logitech</strong> is your trusted partner for comprehensive logistics solutions.
-        We pride ourselves on offering end-to-end supply chain services, encompassing inplant services,
-        storage, warehousing, inventory management, packaging solutions, and last-mile deliveries —
-        all seamlessly integrated under one roof.
-      </p>
-      <p>
-        At Drona, we leverage cutting-edge technology to enhance efficiency, provide real-time tracking,
-        and deliver data-driven insights. Our collaborative and strategic approach ensures tailored solutions
-        that align with your unique business needs. With a global reach and local expertise, we navigate
-        the intricacies of supply chain management, offering a seamless and reliable experience.
-      </p>
-    </div>
-
-    <div class="row justify-content-center">
-      <!-- Mission -->
-      <div class="col-md-6" data-aos="fade-right">
-        <div class="about-card">
-          <h4><i class="bi bi-bullseye me-2"></i>Mission</h4>
-          <p>
-            By 2027, our goal is to establish ourselves as the <strong>unequivocal and most trusted strategic logistic partner</strong>
-            for our customers, entrusted with the seamless management and execution of comprehensive <strong>4PL operations</strong>.
-          </p>
-        </div>
-      </div>
-
-      <!-- Vision -->
-      <div class="col-md-6" data-aos="fade-left">
-        <div class="about-card">
-          <h4><i class="bi bi-eye me-2"></i>Vision</h4>
-          <p>
-            Leading the industry by providing <strong>customized, tailor-made logistic solutions</strong> that empower customers
-            to optimize their costs while leveraging <strong>tech excellence</strong>, reinforcing a dedicated, digitized,
-            and sustainable experience.
-          </p>
-        </div>
+  <!-- Summary Cards -->
+  <div class="row mb-4 text-center">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm p-3 bg-light">
+        <h5>Total Check-Ins</h5>
+        <p class="fs-3 fw-bold text-success">{{ total_in }}</p>
       </div>
     </div>
-  </section>
-
-
-
-
-
-  <section id="services">
-    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px; color: #fff;">Our Services</h2>
-    <div class="card-container">
-
-      <!-- In Plant & Contract Manufacturing -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/contract.jpg') }}" alt="In Plant & Contract Manufacturing">
-        <h3><i class="bi bi-building-gear me-2"></i>In Plant & Contract Manufacturing</h3>
-        <p>Customized on-site production solutions.</p>
-        <div class="card-note">
-          <ul style="list-style: none; padding-left: 0;">
-            <li>
-              <strong><i class="bi bi-gear-wide-connected me-2" style="color: #C22708;"></i><span style="color: #C22708;">Assembly Line Operations</span></strong><br>
-              The team at Drona specialises in designing and implementing streamlined assembly processes, maximising throughput and minimising cycle times. This optimisation has helped our clients reduce costs, improve quality, and enhance overall performance.
-            </li>
-            <br>
-            <li>
-              <strong><i class="bi bi-diagram-3-fill me-2" style="color: #C22708;"></i><span style="color: #C22708;">Product Lifecycle Management</span></strong><br>
-              Our comprehensive product lifecycle management solutions encompass all stages from design to end-of-life, leveraging advanced technologies and industry best practices for seamless integration.
-            </li>
-            <br>
-            <li>
-              <strong><i class="bi bi-bar-chart-line-fill me-2" style="color: #C22708;"></i><span style="color: #C22708;">Data-Driven Decision Making</span></strong><br>
-              We utilize data-driven decision making, collecting and analyzing data from diverse sources such as supply chain operations, customer feedback, and market trends, to drive business success and enhance operational performance.
-            </li>
-            <br>
-            <li>
-              <strong><i class="bi bi-sliders2-vertical me-2" style="color: #C22708;"></i><span style="color: #C22708;">Tailor-Made Solutions</span></strong><br>
-              We provide tailor-made solutions to cater to the unique needs of each client, working closely with them to understand their challenges, goals, and objectives, and developing customized solutions accordingly.
-            </li>
-            <br>
-            <li>
-              <strong><i class="bi bi-shield-check me-2" style="color: #C22708;"></i><span style="color: #C22708;">Quality & Inspection</span></strong><br>
-              Ensuring stringent quality standards throughout our operations, from manufacturing to fulfilment, we meticulously adhere to inspection protocols to guarantee products surpass customer expectations.
-            </li>
-          </ul>
-        </div>
-      </div>
-
-
-
-      <!-- Last Mile & Distribution -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/distribution.jpg') }}" alt="Last Mile & Distribution">
-        <h3>Last Mile & Distribution</h3>
-        <p>Reliable last-mile delivery across locations.</p>
-        <div class="card-note">
-          Our distribution model ensures timely delivery with route optimization, real-time tracking, and customer satisfaction as top priorities.
-        </div>
-      </div>
-
-      <!-- E-Commerce & Fulfilment -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/ecommerce.jpg') }}" alt="E-Commerce & Fulfilment">
-        <h3>E-Commerce & Fulfilment</h3>
-        <p>Scalable and tech-enabled fulfillment.</p>
-        <div class="card-note">
-          Integrated solutions for storage, order management, and multi-channel fulfillment to scale your e-commerce business effortlessly.
-        </div>
-      </div>
-
-      <!-- Warehousing & Storage -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/warehouse.jpg') }}" alt="Warehousing & Storage">
-        <h3>Warehousing & Storage</h3>
-        <p>Safe and scalable warehousing solutions.</p>
-        <div class="card-note">
-          We provide customized warehouse design, inventory management, and WMS integration to ensure high-efficiency storage and control.
-        </div>
-      </div>
-
-      <!-- Project Management -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/project.jpg') }}" alt="Project Management">
-        <h3>Project Management</h3>
-        <p>End-to-end project logistics oversight.</p>
-        <div class="card-note">
-          We manage complex logistics projects from planning to execution, ensuring timelines, budgets, and quality standards are met.
-        </div>
-      </div>
-
-      <!-- Supply Chain Consultancy -->
-      <div class="card" onclick="toggleNote(this)">
-        <img src="{{ url_for('static', filename='img/consultancy.jpg') }}" alt="Supply Chain Consultancy">
-        <h3>Supply Chain Consultancy</h3>
-        <p>Strategic and operational insights.</p>
-        <div class="card-note">
-          Our consultants analyze and optimize your entire supply chain for cost-efficiency, scalability, and resilience in dynamic markets.
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-
-  <section id="customers">
-    <h2>Our Customers</h2>
-    <div class="logos">
-      <img src="{{ url_for('static', filename='img/customer1.png') }}" alt="Customer 1" style="width: 450px; height: auto;">
-      <!-- <img src="{{ url_for('static', filename='img/customer2.png') }}" alt="Customer 2" style="width: 250px; height: auto;"> -->
-    </div>
-    <blockquote>“Excellent service and support!” – All Customer</blockquote>
-  </section>
-
-
-  <section id="location">
-    <div class="container text-center">
-      <h2>Empowering Your Business Across India</h2>
-      <p class="lead">200+ Vehicles | 500+ Workforce | 1,00,000+ SKUs</p>
-
-      <div class="map-wrapper">
-        <!-- Start Inline SVG -->
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="50 50 800 1000" class="india-map-svg">
-          <!-- Example states with IDs for styling -->
-          <path id="Rajasthan" d="M150,200 L180,220 L170,250 Z" class="highlight-state" />
-          <path id="Gujarat" d="M120,260 L150,280 L130,310 Z" class="highlight-state" />
-          <path id="Maharashtra" d="M200,300 L230,320 L210,350 Z" class="highlight-state" />
-          <path id="Telangana" d="M250,360 L280,380 L260,410 Z" class="highlight-state" />
-          <path id="Jharkhand" d="M300,320 L330,340 L310,370 Z" class="highlight-state" />
-          <path id="UttarPradesh" d="M320,270 L350,290 L330,320 Z" class="highlight-state" />
-          <path id="Haryana" d="M270,230 L290,250 L280,270 Z" class="highlight-state" />
-          <!-- Add more paths here for full India if needed -->
-        </svg>
-        <!-- End Inline SVG -->
-      </div>
-
-      <div class="state-tags">
-        <span data-state="Rajasthan">Rajasthan</span>
-        <span data-state="Gujarat">Gujarat</span>
-        <span data-state="Maharashtra">Maharashtra</span>
-        <span data-state="Telangana">Telangana</span>
-        <span data-state="Jharkhand">Jharkhand</span>
-        <span data-state="UttarPradesh">Uttar Pradesh</span>
-        <span data-state="Haryana">Haryana</span>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm p-3 bg-light">
+        <h5>Total Check-Outs</h5>
+        <p class="fs-3 fw-bold text-danger">{{ total_out }}</p>
       </div>
     </div>
-  </section>
-
-
-
-
-  <section id="contact">
-    <div class="contact-container">
-      <h2>Get in Touch</h2>
-      <p class="subtitle">
-        We'd love to hear from you. Fill out the form or email us at
-        <i class="fas fa-envelope email-icon"></i>
-        <a href="mailto:info@dronalogitech.com" class="email-link">info@dronalogitech.com</a>
-      </p>
-
-      <form>
-        <input type="text" placeholder="Your Name" required>
-        <input type="email" placeholder="Your Email" required>
-        <textarea placeholder="Your Message" rows="4" required></textarea>
-        <button type="submit">Send Message</button>
-      </form>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm p-3 bg-light">
+        <h5>Total Vehicle Status</h5>
+        <p class="fs-3 fw-bold text-primary">{{ total_status }}</p>
+      </div>
     </div>
-  </section>
+  </div>
 
+  <!-- Download Report -->
+  <div class="text-end mb-3">
+    <a href="{{ url_for('export') }}" class="btn btn-outline-primary shadow-sm">
+      ⬇️ Download Report
+    </a>
+  </div>
 
-  <footer>
-    <p>&copy; 2025 Drona Logitech Pvt Ltd. All rights reserved.</p>
-  </footer>
-  <script>
-    function toggleNote(card) {
-      const isActive = card.classList.contains('active');
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-      if (!isActive) {
-        card.classList.add('active');
-      }
-    }
-  </script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init({ duration: 1000, once: true });
-  </script>
+  <!-- Graphs -->
+  <div class="row mb-4">
+    <div class="col-md-6 text-center mb-3">
+      {% if chart_in %}
+        <div class="card p-2 shadow-sm">
+          <h6 class="fw-semibold">📈 Check-In Trends</h6>
+          <img src="data:image/png;base64,{{ chart_in }}" class="img-fluid rounded"/>
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-md-6 text-center mb-3">
+      {% if chart_out %}
+        <div class="card p-2 shadow-sm">
+          <h6 class="fw-semibold">📉 Check-Out Trends</h6>
+          <img src="data:image/png;base64,{{ chart_out }}" class="img-fluid rounded"/>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
-  <script>
-    document.querySelectorAll('.state-tags span').forEach(tag => {
-      tag.addEventListener('click', () => {
-        const state = tag.dataset.state;
-        alert(`Clicked on ${state}`);
-        // Add your filter logic here
-      });
+  <!-- Vehicle Check-In Form -->
+  <div class="form-section">
+    <h3 class="mb-3 text-success"><i class="bi bi-plus-circle me-2"></i> New Check-In</h3>
+    <form method="POST" action="{{ url_for('checkin') }}" class="row g-3">
+      <div class="col-md-4">
+        <input type="text" name="reg_no" class="form-control" placeholder="Vehicle Reg No" required>
+      </div>
+      <div class="col-md-4">
+        <select name="type" class="form-select" required>
+          <option value="">Select Type</option>
+          <option value="Car">Car</option>
+          <option value="Truck">Truck</option>
+          <option value="HCV">HCV</option>
+          <option value="LCV">LCV</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select name="load_unload" class="form-select" required>
+          <option value="">Select Operation Type</option>
+          <option value="Load">Load</option>
+          <option value="Unload">Unload</option>
+          <option value="Load/Unload">Load/Unload</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="transporter" class="form-control" placeholder="Transporter">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="supplier" class="form-control" placeholder="Supplier">
+      </div>
+      <div class="col-md-4">
+        <input type="text" name="lr_number" class="form-control" placeholder="LR Number">
+      </div>
+
+      <!-- ✅ Contact Number Field with Icon & Validation -->
+      <div class="col-md-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-telephone-fill text-success"></i></span>
+          <input type="text" name="contact_no" class="form-control"
+                 placeholder="Contact Number"
+                 pattern="[0-9]{10}" minlength="10" maxlength="10" inputmode="numeric" required>
+        </div>
+        <small class="text-muted">Enter 10-digit mobile number only</small>
+      </div>
+
+      <div class="col-md-4">
+        <input type="text" name="remarks" class="form-control" placeholder="Remarks">
+      </div>
+      <div class="col-md-4 d-grid">
+        <button type="submit" class="btn btn-success">Check-In</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Filters -->
+  <div class="card p-3 shadow-sm mb-3">
+    <h5 class="mb-2 text-primary"><i class="bi bi-funnel me-2"></i> Filters</h5>
+    <div class="row g-2">
+      <div class="col-md-2"><input type="text" id="filterReg" class="form-control" placeholder="Reg No"></div>
+      <div class="col-md-2"><input type="text" id="filterTransporter" class="form-control" placeholder="Transporter"></div>
+      <div class="col-md-2"><input type="text" id="filterSupplier" class="form-control" placeholder="Supplier"></div>
+      <div class="col-md-2">
+        <select id="filterLoadUnload" class="form-select">
+          <option value="">Load/Unload</option>
+          <option>Load</option>
+          <option>Unload</option>
+          <option>Load/Unload</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <select id="filterStatus" class="form-select">
+          <option value="">Status</option>
+          <option>IN</option>
+          <option>OUT</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vehicle List -->
+  <h3 class="mb-3 fw-bold text-primary"><i class="bi bi-list-ul me-2"></i> Vehicle Logs</h3>
+  <div class="table-responsive">
+    <table id="vehicleTable" class="table table-bordered table-striped table-hover shadow-sm">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Reg No</th>
+          <th>Type</th>
+          <th>Transporter</th>
+          <th>Supplier</th>
+          <th>LR Number</th>
+          <th>Contact No</th>
+          <th>Load/Unload</th>
+          <th>Status</th>
+          <th>Remarks</th>
+          <th>Check-In</th>
+          <th>Check-Out</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vehicles %}
+        <tr>
+          <td>{{ v.id }}</td>
+          <td>{{ v.reg_no }}</td>
+          <td>{{ v.type }}</td>
+          <td>{{ v.transporter }}</td>
+          <td>{{ v.supplier }}</td>
+          <td>{{ v.lr_number }}</td>
+          <td>{{ v.contact_no }}</td>
+          <td>{{ v.load_unload }}</td>
+          <td>{{ v.status }}</td>
+          <td>{{ v.remarks }}</td>
+          <td>{{ v.check_in }}</td>
+          <td>{{ v.check_out }}</td>
+          <td>
+            {% if v.status == 'IN' %}
+              <a href="{{ url_for('checkout', vid=v.id) }}" class="btn btn-sm btn-danger">Check-Out</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="text-center">
+  <div class="container">
+    <div class="mb-2">
+      <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
+      <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
+      <a href="https://linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+    </div>
+    <p class="mb-0">© {{ current_year }} Vehicle Holding Dashboard | All Rights Reserved</p>
+  </div>
+</footer>
+
+<!-- JS for Smart Filtering -->
+<script>
+  function filterTable() {
+    const reg = document.getElementById("filterReg").value.toLowerCase();
+    const transporter = document.getElementById("filterTransporter").value.toLowerCase();
+    const supplier = document.getElementById("filterSupplier").value.toLowerCase();
+    const loadUnload = document.getElementById("filterLoadUnload").value.toLowerCase();
+    const status = document.getElementById("filterStatus").value.toLowerCase();
+
+    document.querySelectorAll("#vehicleTable tbody tr").forEach(row => {
+      const cells = row.getElementsByTagName("td");
+      const matches =
+        (cells[1].innerText.toLowerCase().includes(reg)) &&
+        (cells[3].innerText.toLowerCase().includes(transporter)) &&
+        (cells[4].innerText.toLowerCase().includes(supplier)) &&
+        (loadUnload === "" || cells[7].innerText.toLowerCase() === loadUnload) &&
+        (status === "" || cells[8].innerText.toLowerCase() === status);
+
+      row.style.display = matches ? "" : "none";
     });
+  }
 
-    document.querySelectorAll('.highlight-state').forEach(state => {
-      state.addEventListener('click', () => {
-        alert(`Clicked on ${state.id}`);
-        // Optional: trigger same logic as state tag
-      });
-    });
-  </script>
-
+  document.querySelectorAll("#filterReg, #filterTransporter, #filterSupplier, #filterLoadUnload, #filterStatus")
+    .forEach(input => input.addEventListener("input", filterTable));
+</script>
 
 </body>
 </html>
