@@ -1,261 +1,161 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response, session, flash
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import matplotlib
-import pytz
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import base64
-import io
-import csv
+from flask import Flask, render_template, request, redirect, url_for, flash
+import pandas as pd
+import psycopg2
+import os
+import numpy as np
 
-IST = pytz.timezone("Asia/Kolkata")
 app = Flask(__name__)
-app.secret_key = "supersecret"
+app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey123")
 
-# ✅ Database Config (PostgreSQL)
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    'postgresql://{user}:{password}@{host}:{port}/{database}'.format(
-        user='u7tqojjihbpn7s',
-        password='p1b1897f6356bab4e52b727ee100290a84e4bf71d02e064e90c2c705bfd26f4a5',
-        host='c7s7ncbk19n97r.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',
-        port=5432,
-        database='d8lp4hr6fmvb9m'
+# =========================
+# DB CONNECTION (Postgres)
+# =========================
+def get_db_connection():
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL:
+        url = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        return psycopg2.connect(url, sslmode='require')
+    else:
+        # Local fallback
+        return psycopg2.connect(
+            host='c7s7ncbk19n97r.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com',
+            user='u7tqojjihbpn7s',
+            password='p1b1897f6356bab4e52b727ee100290a84e4bf71d02e064e90c2c705bfd26f4a5',
+            dbname='d8lp4hr6fmvb9m',
+            port=5432,
+            sslmode='require'
+        )
+
+# =========================
+# SMART COLUMN CLEANING
+# =========================
+def clean_columns(df):
+    df.columns = (
+        df.columns.str.strip()
+        .str.upper()
+        .str.replace(" ", "_")
+        .str.replace(r"[^\w\s]", "", regex=True)
     )
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+    mapping = {
+        'VEHICLE': 'VEHICLE_NO',
+        'VEHICLE_NUMBER': 'VEHICLE_NO',
+        'INDENT': 'INDENT_ID',
+        'INDENT_NO': 'INDENT_ID',
+        'DATE': 'TRIP_DATE',
+        'FROM': 'FROM_LOCATION',
+        'TO': 'TO_LOCATION',
+        'CHARGING': 'CHARGING_COST',
+        'TOTAL_COST': 'TOTAL_TRIP_COST'
+    }
+    return df.rename(columns=mapping)
 
-# 🚚 Vehicle Table
-class Vehicle(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    reg_no = db.Column(db.String(50), nullable=False)
-    type = db.Column(db.String(50), nullable=False)
-    transporter = db.Column(db.String(100))
-    supplier = db.Column(db.String(100))
-    lr_number = db.Column(db.String(100))
-    contact_no = db.Column(db.String(15))   # ✅ NEW COLUMN
+# =========================
+# WELCOME PAGE (Add kiya gaya hai)
+# =========================
+@app.route("/")
+def welcome():
+    return render_template("welcome.html")
 
-    load_unload = db.Column(db.String(50))  # Load / Unload
-    remarks = db.Column(db.String(255))     # Remarks
-
-    status = db.Column(db.String(10), default="IN")
-    check_in = db.Column(db.String(50))
-    check_out = db.Column(db.String(50))
-
-
-# ✅ Hardcoded Users
-USERS = {
-    "admin": "admin123",
-    "super": "test123"
-}
-
-
-# ---------- Helper Functions ----------
-def filter_by_date_range(data, start_date, end_date):
-    if not start_date or not end_date:
-        return data
-    filtered = []
-    for v in data:
-        if v.check_in:
-            check_in = datetime.strptime(v.check_in, "%Y-%m-%d %H:%M:%S")
-            if start_date <= check_in.date() <= end_date:
-                filtered.append(v)
-    return filtered
-
-
-def get_summary():
-    total_in = Vehicle.query.filter_by(status="IN").count()
-    total_out = Vehicle.query.filter_by(status="OUT").count()
-    total_status = Vehicle.query.count()
-    return total_in, total_out, total_status
-
-
-def generate_charts(daily_in, daily_out):
-    all_days = sorted(set(daily_in.keys()) | set(daily_out.keys()))
-    in_counts = [daily_in.get(d, 0) for d in all_days]
-    out_counts = [daily_out.get(d, 0) for d in all_days]
-
-    # ---- IN VEHICLES CHART ----
-    fig1, ax1 = plt.subplots(figsize=(5, 3))
-    ax1.plot(all_days, in_counts, marker='o', linestyle='-', color='green', linewidth=2)
-    ax1.set_title("Daily Check-Ins")
-    ax1.set_xlabel("Date")
-    ax1.set_ylabel("Count")
-    ax1.grid(True, linestyle="--", alpha=0.6)
-
-    buf1 = io.BytesIO()
-    plt.tight_layout()
-    fig1.savefig(buf1, format="png")
-    buf1.seek(0)
-    chart_in = base64.b64encode(buf1.getvalue()).decode("utf-8")
-    plt.close(fig1)
-
-    # ---- OUT VEHICLES CHART ----
-    fig2, ax2 = plt.subplots(figsize=(5, 3))
-    ax2.plot(all_days, out_counts, marker='o', linestyle='-', color='red', linewidth=2)
-    ax2.set_title("Daily Check-Outs")
-    ax2.set_xlabel("Date")
-    ax2.set_ylabel("Count")
-    ax2.grid(True, linestyle="--", alpha=0.6)
-
-    buf2 = io.BytesIO()
-    plt.tight_layout()
-    fig2.savefig(buf2, format="png")
-    buf2.seek(0)
-    chart_out = base64.b64encode(buf2.getvalue()).decode("utf-8")
-    plt.close(fig2)
-
-    return chart_in, chart_out
-
-
-# ---------- Routes ----------
-@app.route('/')
-def home():
-    if "user" in session:
-        return redirect(url_for('index'))
-    return redirect(url_for('login'))
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+# =========================
+# UPLOAD LOGIC
+# =========================
+@app.route("/upload", methods=["GET", "POST"])
+def upload_file():
     if request.method == "POST":
-        userid = request.form['userid']
-        password = request.form['password']
-        if userid in USERS and USERS[userid] == password:
-            session['user'] = userid
-            return redirect(url_for('index'))
-        else:
-            flash("Invalid credentials!", "danger")
-    return render_template('login.html')
+        file = request.files.get("file")
+        if not file:
+            flash("Please select a file.", "warning")
+            return redirect(request.url)
 
+        try:
+            if file.filename.endswith(".csv"):
+                df = pd.read_csv(file)
+            else:
+                df = pd.read_excel(file)
 
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
+            df = clean_columns(df)
 
+            db_cols = [
+                "VEHICLE_NO", "INDENT_ID", "TRIP_DATE", "FROM_LOCATION",
+                "TO_LOCATION", "CHARGING_COST", "TOLL", "DRIVER_ON_ACCOUNT",
+                "OTHER_EXP", "REMARK", "TOTAL_TRIP_COST"
+            ]
+            for col in db_cols:
+                if col not in df.columns:
+                    df[col] = None
 
-@app.route('/index')
-def index():
-    if "user" not in session:
-        return redirect(url_for('login'))
+            df["TRIP_DATE"] = pd.to_datetime(df["TRIP_DATE"], errors="coerce")
 
-    search_query = request.args.get('search', '').strip()
-    start_date_str = request.args.get('start_date', '')
-    end_date_str = request.args.get('end_date', '')
+            num_cols = ["CHARGING_COST", "TOLL", "DRIVER_ON_ACCOUNT", "OTHER_EXP", "TOTAL_TRIP_COST"]
+            for col in num_cols:
+                df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-    start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else None
-    end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
+            df = df.replace({np.nan: None})
 
-    # ✅ Order by ID
-    vehicles = Vehicle.query.order_by(Vehicle.id.asc()).all()
-    filtered = filter_by_date_range(vehicles, start_date, end_date)
+            conn = get_db_connection()
+            cur = conn.cursor()
 
-    if search_query:
-        filtered = [v for v in filtered if search_query in v.reg_no]
+            for _, r in df.iterrows():
+                cur.execute("""
+                    INSERT INTO vehicle_expenses (
+                        vehicle_no, indent_id, trip_date,
+                        from_location, to_location,
+                        charging_cost, toll,
+                        driver_on_account, other_exp,
+                        remark, total_trip_cost
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    str(r["VEHICLE_NO"]) if r["VEHICLE_NO"] else "",
+                    str(r["INDENT_ID"]) if r["INDENT_ID"] else "",
+                    r["TRIP_DATE"].date() if r["TRIP_DATE"] else None,
+                    str(r["FROM_LOCATION"]) if r["FROM_LOCATION"] else "",
+                    str(r["TO_LOCATION"]) if r["TO_LOCATION"] else "",
+                    float(r["CHARGING_COST"]),
+                    float(r["TOLL"]),
+                    float(r["DRIVER_ON_ACCOUNT"]),
+                    float(r["OTHER_EXP"]),
+                    str(r["REMARK"]) if r["REMARK"] else "",
+                    float(r["TOTAL_TRIP_COST"])
+                ))
 
-    daily_in, daily_out = {}, {}
-    for v in filtered:
-        date_str = v.check_in.split(" ")[0] if v.check_in else None
-        if date_str:
-            if v.status == "IN":
-                daily_in[date_str] = daily_in.get(date_str, 0) + 1
-            elif v.status == "OUT":
-                daily_out[date_str] = daily_out.get(date_str, 0) + 1
+            conn.commit()
+            cur.close()
+            conn.close()
 
-    chart_in, chart_out = generate_charts(daily_in, daily_out) if filtered else (None, None)
-    total_in, total_out, total_status = get_summary()
+            flash("Data Uploaded Successfully! ✅", "success")
+            return redirect(url_for("upload_file"))
+
+        except Exception as e:
+            flash(f"Error: {str(e)}", "danger")
+            return redirect(request.url)
+
+    return render_template("upload.html")
+
+# =========================
+# DASHBOARD
+# =========================
+@app.route("/dashboard")
+def dashboard():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM vehicle_expenses ORDER BY trip_date DESC NULLS LAST")
+    rows = cur.fetchall()
+
+    cur.execute("SELECT vehicle_no, SUM(total_trip_cost) FROM vehicle_expenses GROUP BY vehicle_no")
+    chart_data = cur.fetchall()
+
+    cur.close()
+    conn.close()
 
     return render_template(
-        'index.html',
-        vehicles=filtered,
-        total_in=total_in,
-        total_out=total_out,
-        total_status=total_status,
-        chart_in=chart_in,
-        chart_out=chart_out,
-        start_date=start_date_str,
-        end_date=end_date_str,
-        user=session['user']
+        "dashboard.html",
+        rows=rows,
+        vehicles=[c[0] for c in chart_data],
+        totals=[float(c[1]) for c in chart_data]
     )
-
-
-@app.route('/checkin', methods=['POST'])
-def checkin():
-    if "user" not in session:
-        return redirect(url_for('login'))
-
-    reg_no = request.form['reg_no']
-    vtype = request.form['type']
-    transporter = request.form['transporter']
-    supplier = request.form['supplier']
-    lr_number = request.form['lr_number']
-    contact_no = request.form['contact_no']  # ✅ new
-    load_unload = request.form.get('load_unload', '')
-    remarks = request.form.get('remarks', '')
-
-    now = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
-    vehicle = Vehicle(
-        reg_no=reg_no,
-        type=vtype,
-        transporter=transporter,
-        supplier=supplier,
-        lr_number=lr_number,
-        contact_no=contact_no,   # ✅ save contact
-        load_unload=load_unload,
-        remarks=remarks,
-        status="IN",
-        check_in=now,
-        check_out=""
-    )
-    db.session.add(vehicle)
-    db.session.commit()
-    return redirect(url_for('index'))
-
-
-@app.route('/checkout/<int:vid>')
-def checkout(vid):
-    if "user" not in session:
-        return redirect(url_for('login'))
-
-    now = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
-    vehicle = Vehicle.query.get(vid)
-    if vehicle and vehicle.status == "IN":
-        vehicle.status = "OUT"
-        vehicle.check_out = now
-        db.session.commit()
-    return redirect(url_for('index'))
-
-
-@app.route('/export')
-def export():
-    if "user" not in session:
-        return redirect(url_for('login'))
-
-    si = io.StringIO()
-    cw = csv.writer(si)
-    cw.writerow([
-        "Entry ID", "Reg. Number", "Type", "Transporter", "Supplier",
-        "LR Number", "Contact No", "Load/Unload", "Status", "Remarks",
-        "Check-In Time", "Check-Out Time"
-    ])
-
-    for v in Vehicle.query.order_by(Vehicle.id.asc()).all():
-        cw.writerow([
-            v.id, v.reg_no, v.type, v.transporter, v.supplier,
-            v.lr_number, v.contact_no, v.load_unload, v.status,
-            v.remarks, v.check_in, v.check_out
-        ])
-
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = "attachment; filename=vehicle_log.csv"
-    output.headers["Content-type"] = "text/csv"
-    return output
-
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
+    # Heroku ke liye port configuration
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
