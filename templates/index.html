@@ -2,273 +2,1641 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vehicle Holding Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <title>Logistics & Supply Chain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body {
-      background-color: #f4f6f9;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
-    .navbar {
-      background: linear-gradient(90deg, #212529, #343a40);
+
+    /* Background video */
+    .video-background,
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.4);
     }
-    .navbar-brand img { height: 40px; }
-    .navbar a.btn:hover { transform: scale(1.05); }
-    .card { border-radius: 15px; transition: transform 0.2s, box-shadow 0.2s; }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
-    .form-section {
-      background: #ffffff;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: -1;
+    }
+
+    nav {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .logo img {
+        width: 120px;
+        height: auto;
+        object-fit: contain;
+        border: none;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: #ffcc00;
+    }
+
+    section {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    #hero {
+      padding: 120px 20px;
+    }
+
+    #hero h1 {
+      font-size: 3.2rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 6px #000;
+    }
+
+    #hero p {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 1px 1px 4px #000;
+    }
+
+    .cta-button {
+      padding: 12px 30px;
+      background-color: #ffcc00;
+      color: #000;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #e6b800;
+      transform: scale(1.05);
+    }
+
+    h2 {
+      font-size: 2.5rem;
       margin-bottom: 30px;
+      color: #00ffc3;
     }
-    .table { border-radius: 10px; overflow: hidden; }
-    .table-hover tbody tr:hover { background-color: #f1f5ff; }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      overflow: hidden;
+      width: 280px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 30px rgba(255, 204, 0, 0.4);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: #ffcc00;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #f0f0f0;
+    }
+
+    .card-note {
+      display: none;
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    .card.active .card-note {
+      display: block;
+    }
+
+    .logos {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .logos img {
+      width: 120px;
+      filter: brightness(1.3);
+      transition: transform 0.3s;
+    }
+
+    .logos img:hover {
+      transform: scale(1.1);
+    }
+
+    blockquote {
+      margin-top: 20px;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: #ffcc00;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea {
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 12px;
+      background-color: #ffcc00;
+      border: none;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #e6b800;
+    }
+    #about {
+      background-color: #C22708;
+      padding: 60px 20px;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 18px;
+      line-height: 1.8;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #about h2 {
+      font-size: 32px;
+      margin-bottom: 30px;
+      color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #about p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+
+    .about-paragraphs {
+      max-width: 960px;
+      margin: 0 auto 40px;
+    }
+
+    .about-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .about-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-card h4 {
+      font-size: 22px;
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .about-card i {
+      color: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+      .about-card {
+        margin-bottom: 20px;
+      }
+    }
+    #location {
+      background: linear-gradient(135deg, #C22708, #f03f1d);
+      color: white;
+      padding: 60px 20px;
+      border-radius: 12px;
+    }
+
+    .map-wrapper {
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .india-map-svg {
+      width: 50%;
+      height: 50;
+    }
+
+    .highlight-state {
+      fill: #f3f3f3;
+      stroke: white;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: fill 0.3s ease;
+    }
+
+    .highlight-state:hover {
+      fill: #ffffff88;
+    }
+
+    .state-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .state-tags span {
+      background-color: #ffffff22;
+      border: 1px solid #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .state-tags span:hover {
+      background-color: #ffffff44;
+    }
+
+    #ai-fab {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 22px;
+      padding: 14px 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+
+    #ai-assistant {
+      position: fixed;
+      bottom: 90px;
+      right: 25px;
+      width: 330px;
+      background: #020617;
+      border-radius: 16px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    }
+
+    .ai-header {
+      background: #ef4444;
+      padding: 12px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-header span {
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .ai-body {
+      padding: 12px;
+      height: 260px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .ai-msg {
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .ai-bot {
+      color: #00ffc3;
+    }
+
+    .ai-user {
+      color: #fff;
+      text-align: right;
+    }
+
+    .ai-input {
+      display: flex;
+      border-top: 1px solid #334155;
+    }
+
+    .ai-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+    }
+
+    .ai-input button {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 0 16px;
+      cursor: pointer;
+    }
+
+    .ai-input.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Typing animation */
+    .ai-typing::after {
+      content: "•••";
+      animation: blink 1.4s infinite both;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      20% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+
+    /* WhatsApp Button */
+    .ai-whatsapp {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: #25d366;
+      color: #fff;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+
+
+    #contact {
+      background: #f0f4f8;
+      padding: 60px 20px;
+    }
+
+    .contact-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    #contact h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 25px;
+      color: #666;
+    }
+
+    .email-link {
+      color: #e60000; /* Red color */
+      font-weight: 600;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .email-link:hover {
+      text-decoration: underline;
+    }
+
+    .email-icon {
+      color: #e60000;  /* Red icon */
+      margin-left: 10px;
+      margin-right: 4px;
+    }
+
+    #contact form input,
+    #contact form textarea {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    #contact form button {
+      width: 100%;
+      padding: 14px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #contact form button:hover {
+      background-color: #0056b3;
+    }
+
+    #customers {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .customer-logo {
+      width: 400px; /* Increase or decrease as needed */
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .customer-logo:hover {
+      transform: scale(1.05); /* Slight zoom on hover */
+    }
+
+    blockquote {
+      margin-top: 30px;
+      font-style: italic;
+      color: #555;
+    }
+
     footer {
-      background: #212529; color: #ddd; padding: 20px 0; margin-top: 40px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
     }
-    footer a { color: #ddd; margin: 0 10px; font-size: 1.4rem; transition: color 0.2s; }
-    footer a:hover { color: #0d6efd; }
+
+    /* New styles for social media icons */
+    .social-icons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-icons a {
+      color: #fff;
+      font-size: 1.5rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      color: #ffcc00; /* Hover color */
+      transform: scale(1.2);
+    }
+
+    @media (max-width: 768px) {
+      .card-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul {
+        flex-direction: column;
+        gap: 1rem;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 1rem;
+        display: none;
+      }
+    }
+
+    /* New styles for the blog section and carousel */
+    .blog-card {
+      min-width: calc(50% - 15px); /* Two cards plus gap */
+      box-sizing: border-box;
+      margin-right: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+    .blog-card:hover {
+        transform: scale(1.03); /* Slight zoom on hover */
+    }
+    .blog-card .card-content {
+      padding: 20px;
+    }
+    .blog-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #00ffc3;
+    }
+    .blog-card p {
+      font-size: 1rem;
+      color: #f0f0f0;
+    }
+    @media (max-width: 768px) {
+      .blog-card {
+        min-width: 100%; /* One card on smaller screens */
+        margin-right: 0;
+      }
+    }
+
+    /* Admin Login UI */
+    #admin-login-form {
+      display: none;
+      max-width: 400px;
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    #admin-login-form h3 {
+      color: #ffcc00;
+      margin-bottom: 15px;
+    }
+    #admin-login-form input {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    #admin-login-form input::placeholder {
+      color: #ccc;
+    }
+    #admin-login-form button {
+      background-color: #00ffc3;
+      color: #000;
+    }
+
+    /* Blog Form UI */
+    #blog-form-container {
+      display: none;
+      max-width: 600px;
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    #blog-form-container input,
+    #blog-form-container textarea {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+    #blog-form-container input::placeholder,
+    #blog-form-container textarea::placeholder {
+      color: #ccc;
+    }
+    #blog-form-container button {
+      background-color: #00ffc3;
+      color: #000;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    #blog-form-container button:hover {
+      background-color: #00e6a8;
+    }
+
+    .blog-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    /* ============================= */
+/* 🔴 COMPANY THEME OVERRIDES */
+/* ============================= */
+
+    :root {
+      --primary-red: #C22708;
+      --accent-red: #ef4444;
+      --highlight-yellow: #ffcc00;
+      --dark-bg: #020617;
+      --white: #ffffff;
+    }
+
+    /* Navbar */
+    nav {
+      background: rgba(194, 39, 8, 0.75);
+    }
+
+    nav ul li a:hover {
+      color: var(--highlight-yellow);
+    }
+
+    /* Headings */
+    h2,
+    .card h3,
+    .blog-card h3 {
+      color: var(--highlight-yellow);
+    }
+
+    /* CTA Buttons */
+    .cta-button,
+    button,
+    #contact form button {
+      background-color: var(--primary-red);
+      color: var(--white);
+    }
+
+    .cta-button:hover,
+    button:hover,
+    #contact form button:hover {
+      background-color: var(--accent-red);
+    }
+
+    /* Cards */
+    .card,
+    .blog-card,
+    .about-card {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 30px rgba(194, 39, 8, 0.45);
+    }
+
+    /* AI Assistant */
+    #ai-fab,
+    .ai-header,
+    .ai-input button {
+      background: var(--accent-red);
+    }
+
+    .ai-bot {
+      color: var(--highlight-yellow);
+    }
+
+    /* About & Location sections */
+    #about,
+    #location {
+      background: linear-gradient(135deg, #C22708, #ef4444);
+    }
+
+    /* Links & icons */
+    .email-link,
+    .email-icon,
+    .social-icons a:hover {
+      color: var(--highlight-yellow);
+    }
+
+    /* Admin / Blog buttons */
+    #admin-login-form button,
+    #blog-form-container button {
+      background-color: var(--highlight-yellow);
+      color: #000;
+    }
+
+    #admin-login-form button:hover,
+    #blog-form-container button:hover {
+      background-color: #ffd84d;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(194, 39, 8, 0.9);
+    }
+
+
   </style>
 </head>
 <body>
 
-<!-- Header Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
-      <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Drona Logo" class="me-2 rounded-circle">
-      Vehicle Holding Dashboard
-    </a>
-    <div class="ms-auto d-flex">
-      <a href="{{ url_for('home') }}" class="btn btn-outline-light me-2">
-        <i class="bi bi-house-door"></i> Home
+  <video autoplay muted loop id="bg-video">
+    <source src="{{ url_for('static', filename='video/bg.mp4') }}" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <nav>
+    <div class="logo">
+        <a href="/">
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}"
+             alt="Logo"
+             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+
+        </a>
+    </div>
+
+    <ul>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#products">Our Products</a></li>
+      <li><a href="#customers">Customers</a></li>
+      <li><a href="#blog">Blogs</a></li>
+      <li><a href="#location">Location</a> </li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section id="hero" style="position: relative; width: 100%; height: 100vh; overflow: hidden;">
+    <!-- Background video -->
+    <video autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+      <source src="{{ url_for('static', filename='video/bg.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Overlay -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 0;"></div>
+
+    <!-- Hero Content -->
+    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;
+                text-align: center; color: #fff; padding: 0 20px;">
+      <h1 style="font-size: 3.5rem; margin: 0; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.6);">Drona Logitech</h1>
+      <h2 style="font-size: 2rem; font-weight: 500; margin-top: 10px; color: #f0f0f0;">Warehouse & Logistics Solutions</h2>
+      <p style="font-size: 1.2rem; margin: 20px 0 30px; color: #e0e0e0;">Reliable. Scalable. Efficient.</p>
+      <a href="#contact" style="padding: 12px 30px; font-size: 1rem; color: white; background-color: #007bff; border: none;
+                border-radius: 25px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+                transition: all 0.3s ease-in-out;"
+         onmouseover="this.style.backgroundColor='#0056b3'; this.style.boxShadow='0 6px 16px rgba(0,86,179,0.4)';"
+         onmouseout="this.style.backgroundColor='#007bff'; this.style.boxShadow='0 4px 12px rgba(0,123,255,0.3)';">
+        Get In Touch
       </a>
-      <a href="{{ url_for('logout') }}" class="btn btn-danger">
-        <i class="bi bi-box-arrow-right"></i> Logout
-      </a>
     </div>
-  </div>
-</nav>
+  </section>
 
-<div class="container py-4">
 
-  <!-- Summary Cards -->
-  <div class="row mb-4 text-center">
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm p-3 bg-light">
-        <h5>Total Check-Ins</h5>
-        <p class="fs-3 fw-bold text-success">{{ total_in }}</p>
-      </div>
+  <section id="about">
+    <h2 class="text-center">About Us</h2>
+
+    <div class="about-paragraphs">
+      <p>
+        <strong>Drona Logitech</strong> is your trusted partner for comprehensive logistics solutions.
+        We pride ourselves on offering end-to-end supply chain services, encompassing inplant services,
+        storage, warehousing, inventory management, packaging solutions, and last-mile deliveries —
+        all seamlessly integrated under one roof.
+      </p>
+      <p>
+        At Drona, we leverage cutting-edge technology to enhance efficiency, provide real-time tracking,
+        and deliver data-driven insights. Our collaborative and strategic approach ensures tailored solutions
+        that align with your unique business needs. With a global reach and local expertise, we navigate
+        the intricacies of supply chain management, offering a seamless and reliable experience.
+      </p>
     </div>
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm p-3 bg-light">
-        <h5>Total Check-Outs</h5>
-        <p class="fs-3 fw-bold text-danger">{{ total_out }}</p>
-      </div>
-    </div>
-    <div class="col-md-4 mb-3">
-      <div class="card shadow-sm p-3 bg-light">
-        <h5>Total Vehicle Status</h5>
-        <p class="fs-3 fw-bold text-primary">{{ total_status }}</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Download Report -->
-  <div class="text-end mb-3">
-    <a href="{{ url_for('export') }}" class="btn btn-outline-primary shadow-sm">
-      ⬇️ Download Report
-    </a>
-  </div>
-
-  <!-- Graphs -->
-  <div class="row mb-4">
-    <div class="col-md-6 text-center mb-3">
-      {% if chart_in %}
-        <div class="card p-2 shadow-sm">
-          <h6 class="fw-semibold">📈 Check-In Trends</h6>
-          <img src="data:image/png;base64,{{ chart_in }}" class="img-fluid rounded"/>
+    <div class="row justify-content-center">
+      <!-- Mission -->
+      <div class="col-md-6" data-aos="fade-right">
+        <div class="about-card">
+          <h4><i class="bi bi-bullseye me-2"></i>Mission</h4>
+          <p>
+            By 2027, our goal is to establish ourselves as the <strong>unequivocal and most trusted strategic logistic partner</strong>
+            for our customers, entrusted with the seamless management and execution of comprehensive <strong>4PL operations</strong>.
+          </p>
         </div>
-      {% endif %}
-    </div>
-    <div class="col-md-6 text-center mb-3">
-      {% if chart_out %}
-        <div class="card p-2 shadow-sm">
-          <h6 class="fw-semibold">📉 Check-Out Trends</h6>
-          <img src="data:image/png;base64,{{ chart_out }}" class="img-fluid rounded"/>
+      </div>
+
+      <!-- Vision -->
+      <div class="col-md-6" data-aos="fade-left">
+        <div class="about-card">
+          <h4><i class="bi bi-eye me-2"></i>Vision</h4>
+          <p>
+            Leading the industry by providing <strong>customized, tailor-made logistic solutions</strong> that empower customers
+            to optimize their costs while leveraging <strong>tech excellence</strong>, reinforcing a dedicated, digitized,
+            and sustainable experience.
+          </p>
         </div>
-      {% endif %}
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Vehicle Check-In Form -->
-  <div class="form-section">
-    <h3 class="mb-3 text-success"><i class="bi bi-plus-circle me-2"></i> New Check-In</h3>
-    <form method="POST" action="{{ url_for('checkin') }}" class="row g-3">
-      <div class="col-md-4">
-        <input type="text" name="reg_no" class="form-control" placeholder="Vehicle Reg No" required>
-      </div>
-      <div class="col-md-4">
-        <select name="type" class="form-select" required>
-          <option value="">Select Type</option>
-          <option value="Car">Car</option>
-          <option value="Truck">Truck</option>
-          <option value="HCV">HCV</option>
-          <option value="LCV">LCV</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <select name="load_unload" class="form-select" required>
-          <option value="">Select Operation Type</option>
-          <option value="Load">Load</option>
-          <option value="Unload">Unload</option>
-          <option value="Load/Unload">Load/Unload</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <input type="text" name="transporter" class="form-control" placeholder="Transporter">
-      </div>
-      <div class="col-md-4">
-        <input type="text" name="supplier" class="form-control" placeholder="Supplier">
-      </div>
-      <div class="col-md-4">
-        <input type="text" name="lr_number" class="form-control" placeholder="LR Number">
-      </div>
+  <section id="services">
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px; color: #fff;">Our Services</h2>
+    <div class="card-container">
 
-      <!-- ✅ Contact Number Field with Icon & Validation -->
-      <div class="col-md-4">
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-telephone-fill text-success"></i></span>
-          <input type="text" name="contact_no" class="form-control"
-                 placeholder="Contact Number"
-                 pattern="[0-9]{10}" minlength="10" maxlength="10" inputmode="numeric" required>
+      <!-- In Plant & Contract Manufacturing -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/contract.jpg') }}" alt="In Plant & Contract Manufacturing">
+        <h3><i class="bi bi-building-gear me-2"></i>In Plant & Contract Manufacturing</h3>
+        <p>Customized on-site production solutions.</p>
+        <div class="card-note">
+          <ul style="list-style: none; padding-left: 0;">
+            <li>
+              <strong><i class="bi bi-gear-wide-connected me-2" style="color: #C22708;"></i><span style="color: #C22708;">Assembly Line Operations</span></strong><br>
+              The team at Drona specialises in designing and implementing streamlined assembly processes, maximising throughput and minimising cycle times. This optimisation has helped our clients reduce costs, improve quality, and enhance overall performance.
+            </li>
+            <br>
+            <li>
+              <strong><i class="bi bi-diagram-3-fill me-2" style="color: #C22708;"></i><span style="color: #C22708;">Product Lifecycle Management</span></strong><br>
+              Our comprehensive product lifecycle management solutions encompass all stages from design to end-of-life, leveraging advanced technologies and industry best practices for seamless integration.
+            </li>
+            <br>
+            <li>
+              <strong><i class="bi bi-bar-chart-line-fill me-2" style="color: #C22708;"></i><span style="color: #C22708;">Data-Driven Decision Making</span></strong><br>
+              We utilize data-driven decision making, collecting and analyzing data from diverse sources such as supply chain operations, customer feedback, and market trends, to drive business success and enhance operational performance.
+            </li>
+            <br>
+            <li>
+              <strong><i class="bi bi-sliders2-vertical me-2" style="color: #C22708;"></i><span style="color: #C22708;">Tailor-Made Solutions</span></strong><br>
+              We provide tailor-made solutions to cater to the unique needs of each client, working closely with them to understand their challenges, goals, and objectives, and developing customized solutions accordingly.
+            </li>
+            <br>
+            <li>
+              <strong><i class="bi bi-shield-check me-2" style="color: #C22708;"></i><span style="color: #C22708;">Quality & Inspection</span></strong><br>
+              Ensuring stringent quality standards throughout our operations, from manufacturing to fulfilment, we meticulously adhere to inspection protocols to guarantee products surpass customer expectations.
+            </li>
+          </ul>
         </div>
-        <small class="text-muted">Enter 10-digit mobile number only</small>
       </div>
 
-      <div class="col-md-4">
-        <input type="text" name="remarks" class="form-control" placeholder="Remarks">
+      <!-- Last Mile & Distribution -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/distribution.jpg') }}" alt="Last Mile & Distribution">
+        <h3>Last Mile & Distribution</h3>
+        <p>Reliable last-mile delivery across locations.</p>
+        <div class="card-note">
+          Our distribution model ensures timely delivery with route optimization, real-time tracking, and customer satisfaction as top priorities.
+        </div>
       </div>
-      <div class="col-md-4 d-grid">
-        <button type="submit" class="btn btn-success">Check-In</button>
-      </div>
-    </form>
-  </div>
 
-  <!-- Filters -->
-  <div class="card p-3 shadow-sm mb-3">
-    <h5 class="mb-2 text-primary"><i class="bi bi-funnel me-2"></i> Filters</h5>
-    <div class="row g-2">
-      <div class="col-md-2"><input type="text" id="filterReg" class="form-control" placeholder="Reg No"></div>
-      <div class="col-md-2"><input type="text" id="filterTransporter" class="form-control" placeholder="Transporter"></div>
-      <div class="col-md-2"><input type="text" id="filterSupplier" class="form-control" placeholder="Supplier"></div>
-      <div class="col-md-2">
-        <select id="filterLoadUnload" class="form-select">
-          <option value="">Load/Unload</option>
-          <option>Load</option>
-          <option>Unload</option>
-          <option>Load/Unload</option>
-        </select>
+      <!-- E-Commerce & Fulfilment -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/ecommerce.jpg') }}" alt="E-Commerce & Fulfilment">
+        <h3>E-Commerce & Fulfilment</h3>
+        <p>Scalable and tech-enabled fulfillment.</p>
+        <div class="card-note">
+          Integrated solutions for storage, order management, and multi-channel fulfillment to scale your e-commerce business effortlessly.
+        </div>
       </div>
-      <div class="col-md-2">
-        <select id="filterStatus" class="form-select">
-          <option value="">Status</option>
-          <option>IN</option>
-          <option>OUT</option>
-        </select>
+
+      <!-- Warehousing & Storage -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/warehouse.jpg') }}" alt="Warehousing & Storage">
+        <h3>Warehousing & Storage</h3>
+        <p>Safe and scalable warehousing solutions.</p>
+        <div class="card-note">
+          We provide customized warehouse design, inventory management, and WMS integration to ensure high-efficiency storage and control.
+        </div>
       </div>
+
+      <!-- Project Management -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/project.jpg') }}" alt="Project Management">
+        <h3>Project Management</h3>
+        <p>End-to-end project logistics oversight.</p>
+        <div class="card-note">
+          We manage complex logistics projects from planning to execution, ensuring timelines, budgets, and quality standards are met.
+        </div>
+      </div>
+
+      <!-- Supply Chain Consultancy -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/consultancy.jpg') }}" alt="Supply Chain Consultancy">
+        <h3>Supply Chain Consultancy</h3>
+        <p>Strategic and operational insights.</p>
+        <div class="card-note">
+          Our consultants analyze and optimize your entire supply chain for cost-efficiency, scalability, and resilience in dynamic markets.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="products">
+    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px; color: #fff;">
+      Our Products
+    </h2>
+
+    <div class="card-container">
+
+      <!-- Logistics Software -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/product_software.jpg') }}" alt="Logistics Software">
+        <h3><i class="bi bi-pc-display-horizontal me-2"></i>Logistics Software</h3>
+        <p>Smart & scalable logistics platforms.</p>
+        <div class="card-note">
+          Our logistics software solutions include order management systems, fleet tracking,
+          warehouse management systems (WMS), and real-time analytics dashboards designed
+          to improve operational visibility and efficiency.
+        </div>
+      </div>
+
+      <!-- Warehouse Automation -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/product_automation.jpg') }}" alt="Warehouse Automation">
+        <h3><i class="bi bi-robot me-2"></i>Warehouse Automation</h3>
+        <p>Automation for faster operations.</p>
+        <div class="card-note">
+          We provide automation solutions such as conveyor systems, barcode & RFID solutions,
+          automated sorting, and smart inventory control to reduce manual effort and errors.
+        </div>
+      </div>
+
+      <!-- Packaging Solutions -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/product_packaging.jpg') }}" alt="Packaging Solutions">
+        <h3><i class="bi bi-box-seam me-2"></i>Packaging Solutions</h3>
+        <p>Safe, sustainable & customized packaging.</p>
+        <div class="card-note">
+          Our packaging products are designed to ensure product safety, optimize space,
+          and support sustainability goals with eco-friendly material options.
+        </div>
+      </div>
+
+      <!-- Fleet Tracking Devices -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/transport.jpg') }}" alt="Fleet Tracking Devices">
+        <h3><i class="bi bi-geo-alt-fill me-2"></i>Fleet Tracking Portal</h3>
+        <p>Real-time vehicle monitoring.</p>
+        <div class="card-note">
+          GPS-enabled fleet tracking devices offering real-time location tracking,
+          route optimization, fuel monitoring, and driver performance insights.
+        </div>
+      </div>
+
+      <!-- Inventory Management Tools -->
+      <div class="card" onclick="toggleNote(this)">
+        <img src="{{ url_for('static', filename='img/product_inventory.jpg') }}" alt="Inventory Management Tools">
+        <h3><i class="bi bi-clipboard-data me-2"></i>Inventory Management Tools</h3>
+        <p>Accurate & real-time inventory control.</p>
+        <div class="card-note">
+          Our inventory tools help businesses maintain optimal stock levels,
+          reduce carrying costs, and improve order fulfillment accuracy.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section id="customers">
+    <h2>Our Customers</h2>
+    <div class="logos">
+      <img src="{{ url_for('static', filename='img/customer1.png') }}" alt="Customer 1" style="width: 450px; height: auto;">
+    </div>
+    <blockquote>“Excellent service and support!” – All Customer</blockquote>
+  </section>
+
+  <!-- Start of new blog section -->
+<!--  <section id="blog" style="padding: 60px 20px; background: #2c3e50; color: white;">-->
+<!--    <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px; color: #ffcc00;">Our Achievements & Blogs</h2>-->
+
+<!--    &lt;!&ndash; Admin Login Form &ndash;&gt;-->
+<!--    <div id="auth-form-container">-->
+<!--        &lt;!&ndash; The content of this div will be dynamically loaded &ndash;&gt;-->
+<!--    </div>-->
+
+<!--    <div class="carousel-container" style="position: relative; max-width: 900px; margin: auto; overflow: hidden;">-->
+<!--      <div class="carousel-inner" style="display: flex; transition: transform 0.5s ease-in-out;">-->
+<!--        &lt;!&ndash; Blog cards will be dynamically inserted here &ndash;&gt;-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="carousel-nav" style="text-align: center; margin-top: 20px;">-->
+<!--      <button id="prevBtn" style="background-color: transparent; border: 2px solid #ffcc00; color: #ffcc00; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 1.5rem;">&#10094;</button>-->
+<!--      <button id="nextBtn" style="background-color: transparent; border: 2px solid #ffcc00; color: #ffcc00; padding: 10px 15px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; margin-left: 20px;">&#10095;</button>-->
+<!--    </div>-->
+
+<!--    <div class="blog-buttons">-->
+<!--      <button id="addBlogBtn" style="padding: 12px 30px; background-color: #00ffc3; color: #000; text-decoration: none; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease;">-->
+<!--        Add a new Blog-->
+<!--      </button>-->
+<!--      <button id="logoutBtn" style="display: none; padding: 12px 30px; background-color: #dc3545; color: #fff; text-decoration: none; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease;">-->
+<!--        Logout-->
+<!--      </button>-->
+<!--    </div>-->
+<!--  </section>-->
+  <!-- End of new blog section -->
+
+  <section id="location">
+    <div class="container text-center">
+      <h2>Empowering Our Business Across India</h2>
+      <p class="lead">200+ Vehicles | 500+ Workforce | 1,00,000+ SKUs</p>
+
+      <div class="map-wrapper">
+        <div class="india-coverage">
+
+          <div class="center-node">
+            <span>INDIA</span>
+            <small>Nationwide Operations</small>
+          </div>
+
+          <div class="state-node" data-state="Rajasthan">Rajasthan</div>
+          <div class="state-node" data-state="Gujarat">Gujarat</div>
+          <div class="state-node" data-state="Maharashtra">Maharashtra</div>
+          <div class="state-node" data-state="Telangana">Telangana</div>
+          <div class="state-node" data-state="Jharkhand">Jharkhand</div>
+          <div class="state-node" data-state="UttarPradesh">Uttar Pradesh</div>
+          <div class="state-node" data-state="Haryana">Haryana</div>
+
+        </div>
+      </div>
+
+      <div class="state-tags">
+        <span data-state="Rajasthan">Rajasthan</span>
+        <span data-state="Gujarat">Gujarat</span>
+        <span data-state="Maharashtra">Maharashtra</span>
+        <span data-state="Telangana">Telangana</span>
+        <span data-state="Jharkhand">Jharkhand</span>
+        <span data-state="UttarPradesh">Uttar Pradesh</span>
+        <span data-state="Haryana">Haryana</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Assistant Widget -->
+  <!-- Floating AI Button -->
+  <div id="ai-fab">💬</div>
+
+  <!-- AI Assistant Box -->
+  <div id="ai-assistant">
+    <div class="ai-header">
+      🤖 Drona AI Assistant
+      <span id="ai-close">×</span>
+    </div>
+
+    <div class="ai-body" id="ai-chat"></div>
+
+    <div class="ai-input">
+      <input type="text" id="ai-user-input" placeholder="Type here..." />
+      <button id="ai-send">Send</button>
     </div>
   </div>
 
-  <!-- Vehicle List -->
-  <h3 class="mb-3 fw-bold text-primary"><i class="bi bi-list-ul me-2"></i> Vehicle Logs</h3>
-  <div class="table-responsive">
-    <table id="vehicleTable" class="table table-bordered table-striped table-hover shadow-sm">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Reg No</th>
-          <th>Type</th>
-          <th>Transporter</th>
-          <th>Supplier</th>
-          <th>LR Number</th>
-          <th>Contact No</th>
-          <th>Load/Unload</th>
-          <th>Status</th>
-          <th>Remarks</th>
-          <th>Check-In</th>
-          <th>Check-Out</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for v in vehicles %}
-        <tr>
-          <td>{{ v.id }}</td>
-          <td>{{ v.reg_no }}</td>
-          <td>{{ v.type }}</td>
-          <td>{{ v.transporter }}</td>
-          <td>{{ v.supplier }}</td>
-          <td>{{ v.lr_number }}</td>
-          <td>{{ v.contact_no }}</td>
-          <td>{{ v.load_unload }}</td>
-          <td>{{ v.status }}</td>
-          <td>{{ v.remarks }}</td>
-          <td>{{ v.check_in }}</td>
-          <td>{{ v.check_out }}</td>
-          <td>
-            {% if v.status == 'IN' %}
-              <a href="{{ url_for('checkout', vid=v.id) }}" class="btn btn-sm btn-danger">Check-Out</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
 
-</div>
 
-<!-- Footer -->
-<footer class="text-center">
-  <div class="container">
-    <div class="mb-2">
-      <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
-      <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
-      <a href="https://linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+
+
+  <section id="contact">
+    <div class="contact-container">
+      <h2>Get in Touch</h2>
+      <p class="subtitle">
+        We'd love to hear from you. Fill out the form or email us at
+        <i class="fas fa-envelope email-icon"></i>
+        <a href="mailto:info@dronalogitech.com" class="email-link">info@dronalogitech.com</a>
+      </p>
+
+      <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message" rows="4" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
     </div>
-    <p class="mb-0">© {{ current_year }} Vehicle Holding Dashboard | All Rights Reserved</p>
-  </div>
-</footer>
+  </section>
 
-<!-- JS for Smart Filtering -->
-<script>
-  function filterTable() {
-    const reg = document.getElementById("filterReg").value.toLowerCase();
-    const transporter = document.getElementById("filterTransporter").value.toLowerCase();
-    const supplier = document.getElementById("filterSupplier").value.toLowerCase();
-    const loadUnload = document.getElementById("filterLoadUnload").value.toLowerCase();
-    const status = document.getElementById("filterStatus").value.toLowerCase();
-
-    document.querySelectorAll("#vehicleTable tbody tr").forEach(row => {
-      const cells = row.getElementsByTagName("td");
-      const matches =
-        (cells[1].innerText.toLowerCase().includes(reg)) &&
-        (cells[3].innerText.toLowerCase().includes(transporter)) &&
-        (cells[4].innerText.toLowerCase().includes(supplier)) &&
-        (loadUnload === "" || cells[7].innerText.toLowerCase() === loadUnload) &&
-        (status === "" || cells[8].innerText.toLowerCase() === status);
-
-      row.style.display = matches ? "" : "none";
+  <footer>
+    <p>&copy; 2025 Drona Logitech Pvt Ltd. All rights reserved.</p>
+    <!-- Social media icons section -->
+    <div class="social-icons">
+      <a href="https://www.linkedin.com/company/drona-logitech/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="https://www.instagram.com/dronalogitech/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.facebook.com/dronalogitech/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+    </div>
+  </footer>
+  <script>
+    function toggleNote(card) {
+      const isActive = card.classList.contains('active');
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      if (!isActive) {
+        card.classList.add('active');
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000, once: true });
+  </script>
+  <script>
+    document.querySelectorAll('.state-tags span').forEach(tag => {
+      tag.addEventListener('click', () => {
+        // Use a more user-friendly message box instead of alert
+        const messageBox = document.createElement('div');
+        messageBox.style.cssText = `
+          position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+          background: rgba(0, 0, 0, 0.8); color: white; padding: 20px;
+          border-radius: 10px; z-index: 1000; text-align: center;
+        `;
+        messageBox.innerHTML = `Clicked on ${tag.dataset.state} <br><br> <button onclick="this.parentNode.remove()">OK</button>`;
+        document.body.appendChild(messageBox);
+      });
     });
+
+    document.querySelectorAll('.highlight-state').forEach(state => {
+      state.addEventListener('click', () => {
+        // Use a more user-friendly message box instead of alert
+        const messageBox = document.createElement('div');
+        messageBox.style.cssText = `
+          position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+          background: rgba(0, 0, 0, 0.8); color: white; padding: 20px;
+          border-radius: 10px; z-index: 1000; text-align: center;
+        `;
+        messageBox.innerHTML = `Clicked on ${state.id} <br><br> <button onclick="this.parentNode.remove()">OK</button>`;
+        document.body.appendChild(messageBox);
+      });
+    });
+
+    // All JavaScript for the blog section is now inside this DOMContentLoaded listener.
+    // This ensures all HTML elements are loaded before the script tries to find and interact with them.
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get all elements for the blog section
+      const carouselInner = document.querySelector('.carousel-inner');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      const addBlogBtn = document.getElementById('addBlogBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      const authFormContainer = document.getElementById('auth-form-container');
+
+      let currentPosition = 0;
+      let cardsToShow = 2; // Default for larger screens
+      let totalCards = 0;
+
+      // Update the number of cards to show based on screen size
+      function updateCardsToShow() {
+        cardsToShow = window.innerWidth <= 768 ? 1 : 2;
+      }
+
+      // Function to check login status
+      async function checkLoginStatus() {
+          try {
+              const response = await fetch('/is_logged_in');
+              if (response.status === 200) {
+                  return true;
+              }
+              return false;
+          } catch (error) {
+              console.error('Error checking login status:', error);
+              return false;
+          }
+      }
+
+      // Function to show the appropriate form based on login status
+      function renderForm(isLoggedIn) {
+          authFormContainer.innerHTML = ''; // Clear previous content
+
+          if (!isLoggedIn) {
+              // Show login form if not logged in
+              authFormContainer.style.display = 'block';
+              authFormContainer.innerHTML = `
+                  <div style="max-width: 400px; margin: 20px auto; background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                      <h3 style="text-align: center; color: #ffcc00; margin-bottom: 15px;">Admin Login</h3>
+                      <form id="loginForm" style="display: flex; flex-direction: column; gap: 15px;">
+                          <input type="text" name="username" placeholder="Username" required style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff;">
+                          <input type="password" name="password" placeholder="Password" required style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff;">
+                          <button type="submit" style="background-color: #00ffc3; color: #000;">Login</button>
+                          <button type="button" id="cancelLoginBtn" style="background-color: #dc3545; color: #fff;">Cancel</button>
+                      </form>
+                  </div>
+              `;
+
+              // Add event listeners for the dynamically created login form
+              const loginForm = document.getElementById('loginForm');
+              const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+
+              loginForm.addEventListener('submit', handleLogin);
+              cancelLoginBtn.addEventListener('click', () => {
+                  authFormContainer.style.display = 'none';
+                  updateButtonVisibility(false);
+              });
+
+          } else {
+              // Show blog form if logged in
+              authFormContainer.style.display = 'block';
+              authFormContainer.innerHTML = `
+                  <div style="max-width: 600px; margin: 20px auto; background: rgba(0, 0, 0, 0.7); padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                      <h3 style="text-align: center; color: #ffcc00; margin-bottom: 20px;">Add New Blog Post</h3>
+                      <form id="blogForm" style="display: flex; flex-direction: column; gap: 15px;">
+                          <input type="file" name="image" required style="padding: 10px; color: #fff; background: rgba(0,0,0,0.2);">
+                          <input type="text" name="title" placeholder="Blog Title" required>
+                          <textarea name="content" placeholder="Write your blog content here..." rows="4" required></textarea>
+                          <button type="submit">Submit</button>
+                          <button type="button" id="cancelBlogBtn" style="background-color: #dc3545; color: #fff;">Cancel</button>
+                      </form>
+                  </div>
+              `;
+
+              // Add event listeners for the dynamically created blog form
+              const blogForm = document.getElementById('blogForm');
+              const cancelBlogBtn = document.getElementById('cancelBlogBtn');
+
+              blogForm.addEventListener('submit', handleAddBlog);
+              cancelBlogBtn.addEventListener('click', () => {
+                  authFormContainer.style.display = 'none';
+                  updateButtonVisibility(true);
+              });
+          }
+      }
+
+      // Function to handle login
+      async function handleLogin(event) {
+          event.preventDefault();
+          const form = event.target;
+          const formData = new FormData(form);
+          const data = Object.fromEntries(formData.entries());
+
+          try {
+              const response = await fetch('/admin', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: new URLSearchParams(data)
+              });
+
+              const result = await response.json();
+              if (response.ok) {
+                  // If login is successful, render the blog form
+                  renderForm(true);
+                  updateButtonVisibility(true);
+              } else {
+                  // Show error message
+                  showMessageBox(result.message);
+              }
+          } catch (error) {
+              console.error('Login error:', error);
+              showMessageBox('Login failed. Please try again.');
+          }
+      }
+
+      // Function to handle adding a new blog post
+      async function handleAddBlog(event) {
+          event.preventDefault();
+          const form = event.target;
+          const formData = new FormData(form);
+
+          try {
+              const response = await fetch('/api/add_blog', {
+                  method: 'POST',
+                  body: formData
+              });
+
+              const result = await response.json();
+              if (response.ok) {
+                  showMessageBox(result.message);
+                  form.reset();
+                  authFormContainer.style.display = 'none';
+                  fetchAndDisplayBlogs(); // Refresh blog list
+                  updateButtonVisibility(true);
+              } else {
+                  showMessageBox(result.error);
+              }
+          } catch (error) {
+              console.error('Error adding blog:', error);
+              showMessageBox('Failed to add blog post. Please try again.');
+          }
+      }
+
+      // Function to handle logout
+      async function handleLogout() {
+          try {
+              const response = await fetch('/logout', { method: 'POST' });
+              const result = await response.json();
+              if (response.ok) {
+                  showMessageBox(result.message);
+                  updateButtonVisibility(false);
+              } else {
+                  showMessageBox('Logout failed.');
+              }
+          } catch (error) {
+              console.error('Logout error:', error);
+              showMessageBox('Logout failed. Please try again.');
+          }
+      }
+
+      // Function to update the visibility of Add and Logout buttons
+      function updateButtonVisibility(isLoggedIn) {
+          if (isLoggedIn) {
+              addBlogBtn.style.display = 'block';
+              logoutBtn.style.display = 'block';
+          } else {
+              addBlogBtn.style.display = 'block'; // Always show 'add blog' button to trigger login
+              logoutBtn.style.display = 'none';
+          }
+      }
+
+      // Function to show a custom message box
+      function showMessageBox(message) {
+          const messageBox = document.createElement('div');
+          messageBox.style.cssText = `
+              position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+              background: #fff; color: #333; padding: 20px;
+              border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.5); z-index: 1000;
+              text-align: center;
+          `;
+          messageBox.innerHTML = `${message} <br><br> <button onclick="this.parentNode.remove()">OK</button>`;
+          document.body.appendChild(messageBox);
+      }
+
+      // Initial check and setup
+      checkLoginStatus().then(isLoggedIn => {
+          updateButtonVisibility(isLoggedIn);
+      });
+
+      // Blog button click listeners
+      addBlogBtn.addEventListener('click', async () => {
+          const isLoggedIn = await checkLoginStatus();
+          renderForm(isLoggedIn);
+      });
+      logoutBtn.addEventListener('click', handleLogout);
+
+      // Carousel functionality
+      function moveCarousel() {
+        const cardWidth = document.querySelector('.blog-card').offsetWidth;
+        const totalWidth = totalCards * (cardWidth + 30); // 30px gap
+        const maxScroll = Math.max(0, totalWidth - carouselInner.offsetWidth);
+
+        if (currentPosition < 0) {
+          currentPosition = 0;
+        }
+        if (currentPosition > maxScroll) {
+          currentPosition = maxScroll;
+        }
+
+        carouselInner.style.transform = `translateX(-${currentPosition}px)`;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.blog-card').offsetWidth;
+        const moveDistance = cardsToShow * (cardWidth + 30);
+        currentPosition += moveDistance;
+        moveCarousel();
+      });
+
+      prevBtn.addEventListener('click', () => {
+        const cardWidth = document.querySelector('.blog-card').offsetWidth;
+        const moveDistance = cardsToShow * (cardWidth + 30);
+        currentPosition -= moveDistance;
+        moveCarousel();
+      });
+
+      // Fetch and display blogs
+      async function fetchAndDisplayBlogs() {
+        try {
+          const response = await fetch('/api/blogs');
+          const blogs = await response.json();
+          carouselInner.innerHTML = '';
+          totalCards = blogs.length;
+
+          if (blogs.length > 0) {
+              blogs.forEach(blog => {
+                  const blogCard = document.createElement('div');
+                  blogCard.classList.add('blog-card');
+                  blogCard.innerHTML = `
+                      <img src="${blog.image_url}" alt="${blog.title}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                      <div class="card-content">
+                          <h3>${blog.title}</h3>
+                          <p>${blog.content}</p>
+                      </div>
+                  `;
+                  carouselInner.appendChild(blogCard);
+              });
+          } else {
+              carouselInner.innerHTML = `<p style="text-align:center; padding: 20px;">No blog posts available.</p>`;
+          }
+          moveCarousel();
+        } catch (error) {
+          console.error('Error fetching blogs:', error);
+          carouselInner.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">Failed to load blogs.</p>`;
+        }
+      }
+
+      // Initial fetch of blogs on page load
+      fetchAndDisplayBlogs();
+      window.addEventListener('resize', () => {
+        updateCardsToShow();
+        moveCarousel();
+      });
+      updateCardsToShow();
+    });
+  </script>
+
+<script>
+(() => {
+  const fab = document.getElementById("ai-fab");
+  const box = document.getElementById("ai-assistant");
+  const closeBtn = document.getElementById("ai-close");
+  const chat = document.getElementById("ai-chat");
+  const input = document.getElementById("ai-user-input");
+  const send = document.getElementById("ai-send");
+  const inputBox = document.querySelector(".ai-input");
+
+  let step = 0;
+  let userData = {};
+
+  function bot(msg) {
+    chat.innerHTML += `<div class="ai-msg ai-bot">${msg}</div>`;
+    chat.scrollTop = chat.scrollHeight;
   }
 
-  document.querySelectorAll("#filterReg, #filterTransporter, #filterSupplier, #filterLoadUnload, #filterStatus")
-    .forEach(input => input.addEventListener("input", filterTable));
+  function user(msg) {
+    chat.innerHTML += `<div class="ai-msg ai-user">${msg}</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function typing() {
+    chat.innerHTML += `<div class="ai-msg ai-bot ai-typing">Typing</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function disableInput() {
+    inputBox.classList.add("disabled");
+  }
+
+  function autoClose() {
+    setTimeout(() => {
+      box.style.display = "none";
+      fab.style.display = "block";
+      chat.innerHTML = "";
+      inputBox.classList.remove("disabled");
+      step = 0;
+      userData = {};
+    }, 10000);
+  }
+
+  /* 🔥 CONTACT FORM AUTO-FILL */
+  function fillContactForm() {
+    const form = document.getElementById("contact-form");
+    if (!form) return;
+
+    const nameInput = form.querySelector('input[type="text"]');
+    const emailInput = form.querySelector('input[type="email"]');
+    const messageInput = form.querySelector("textarea");
+
+    if (nameInput) nameInput.value = userData.name || "";
+    if (emailInput) emailInput.value = "";
+    if (messageInput) {
+      messageInput.value =
+        `Name: ${userData.name}\n` +
+        `Phone: ${userData.phone}\n` +
+        `Interest: ${userData.interest}\n\n` +
+        `Contacted via AI Assistant.`;
+    }
+  }
+
+  function nextStep(value) {
+    if (step === 0) {
+      userData.name = value;
+      bot(`Nice to meet you <b>${value}</b> 😊<br>Please share your contact number.`);
+    }
+
+    else if (step === 1) {
+      userData.phone = value;
+      bot(`Thank you 👍<br>How May I help You ?<br>
+        • Warehousing<br>• Logistics<br>• Software<br>• Consultancy`);
+    }
+
+    else if (step === 2) {
+      userData.interest = value;
+      typing();
+
+      setTimeout(() => {
+        chat.lastChild.remove();
+
+        let interestMsg = "Our experts will assist you with the best solution.";
+        if (/warehouse/i.test(value)) interestMsg = "Our warehousing specialists will guide you with scalable storage solutions.";
+        else if (/logistics/i.test(value)) interestMsg = "Our logistics team will help you with efficient transportation solutions.";
+        else if (/software/i.test(value)) interestMsg = "Our technology team will connect with you for smart digital solutions.";
+        else if (/consult/i.test(value)) interestMsg = "Our consultants will understand your business requirements.";
+
+        const waMsg = encodeURIComponent(
+          `Hello, my name is ${userData.name}. I am interested in ${userData.interest}.`
+        );
+
+        bot(`
+          Thank you for sharing your requirement 🙏<br><br>
+          <b>${interestMsg}</b><br><br>
+          ⏳ <b>Within 24 hours</b> Our team will contact you 📞<br>
+          🕘 <small>Business Hours: Mon–Sat | 10:00 AM – 7:00 PM</small><br><br>
+          <a class="ai-whatsapp" target="_blank"
+            href="https://wa.me/91XXXXXXXXXX?text=${waMsg}">
+            💬 Chat on WhatsApp
+          </a>
+        `);
+
+        fillContactForm();
+        disableInput();
+        autoClose();
+      }, 1200);
+    }
+
+    step++;
+  }
+
+  send.onclick = () => {
+    if (!input.value.trim()) return;
+    user(input.value);
+    nextStep(input.value);
+    input.value = "";
+  };
+
+  fab.onclick = () => {
+    box.style.display = "flex";
+    fab.style.display = "none";
+    setTimeout(() => {
+      bot("Hello 👋 I am <b>Drona AI Assistant</b>.<br>May I know your name?");
+    }, 500);
+  };
+
+  closeBtn.onclick = () => {
+    box.style.display = "none";
+    fab.style.display = "block";
+  };
+})();
 </script>
+
+
 
 </body>
 </html>
